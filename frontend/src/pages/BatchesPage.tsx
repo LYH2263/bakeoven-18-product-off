@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
-type P = { id: number; name: string }; type O = { id: number; label: string };
+type P = { id: number; name: string; active?: boolean }; type O = { id: number; label: string };
 type B = { id: number; code: string; product_name?: string; oven_label?: string; start_min: number; ferment_end?: number; bake_end?: number; status: string };
 function fmt(m: number) { const h = Math.floor(m/60), mm = m%60; return `${String(h).padStart(2,"0")}:${String(mm).padStart(2,"0")}`; }
 export default function BatchesPage() {
@@ -26,7 +26,7 @@ export default function BatchesPage() {
   return (<>
     <h2>批次</h2>
     <div className="toolbar">
-      <select value={pid} onChange={e => setPid(Number(e.target.value))}>{products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
+      <select value={pid} onChange={e => setPid(Number(e.target.value))}>{products.map(p => <option key={p.id} value={p.id}>{p.name}{p.active === false ? "（已停用）" : ""}</option>)}</select>
       <select value={oid} onChange={e => setOid(Number(e.target.value))}>{ovens.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}</select>
       <label>开工分钟 <input type="number" value={start} onChange={e => setStart(Number(e.target.value))} style={{ width: 90 }} /></label>
       <button onClick={create}>创建生产批次</button>

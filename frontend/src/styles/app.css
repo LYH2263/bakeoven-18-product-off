@@ -247,6 +247,7 @@ select, input, .gantt-deck button, .toolbar button {
 }
 .mono { font-family: "IBM Plex Mono", monospace; }
 .err { color: #ff9b7a; } .ok { color: #e8c48a; }
+.muted { color: var(--bake-muted); }
 
 .gantt { display: flex; flex-direction: column; gap: .65rem; }
 .gantt-row {
