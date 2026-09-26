@@ -10,6 +10,7 @@ from app.schemas.schemas import (
     ConflictOut,
     GanttBlock,
     OvenOut,
+    ProductActiveUpdate,
     ProductOut,
     WindowOut,
 )
@@ -68,6 +69,17 @@ def products(db: Session = Depends(get_db)):
     return db.scalars(select(Product).order_by(Product.id)).all()
 
 
+@api_router.post("/products/{product_id}/active", response_model=ProductOut)
+def set_product_active(product_id: int, body: ProductActiveUpdate, db: Session = Depends(get_db)):
+    product = db.get(Product, product_id)
+    if not product:
+        raise HTTPException(404, "产品不存在")
+    product.is_active = body.is_active
+    db.commit()
+    db.refresh(product)
+    return product
+
+
 @api_router.get("/ovens", response_model=list[OvenOut])
 def ovens(db: Session = Depends(get_db)):
     return db.scalars(select(Oven).order_by(Oven.id)).all()
@@ -85,6 +97,8 @@ def create_batch(body: BatchCreate, db: Session = Depends(get_db)):
     oven = db.get(Oven, body.oven_id)
     if not product or not oven:
         raise HTTPException(404, "产品或炉位不存在")
+    if not product.is_active:
+        raise HTTPException(400, "产品已停用")
     recipe = _recipe(product)
     candidates = build_occupancies(oven.id, -1, body.start_min, recipe)
     existing = _all_occupancies(db)
@@ -144,6 +158,8 @@ def windows(product_id: int, db: Session = Depends(get_db)):
     product = db.get(Product, product_id)
     if not product:
         raise HTTPException(404, "产品不存在")
+    if not product.is_active:
+        return []
     duration = product.ferment_min + product.bake_min
     existing = _all_occupancies(db)
     out: list[WindowOut] = []

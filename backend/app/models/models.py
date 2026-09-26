@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -12,6 +12,7 @@ class Product(Base):
     name: Mapped[str] = mapped_column(String(80), unique=True)
     ferment_min: Mapped[int] = mapped_column(Integer)
     bake_min: Mapped[int] = mapped_column(Integer)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
 
 
 class Oven(Base):

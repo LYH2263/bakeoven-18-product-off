@@ -7,7 +7,12 @@ class ProductOut(BaseModel):
     name: str
     ferment_min: int
     bake_min: int
+    is_active: bool
     model_config = {"from_attributes": True}
+
+
+class ProductActiveUpdate(BaseModel):
+    is_active: bool
 
 
 class OvenOut(BaseModel):
